@@ -160,7 +160,7 @@ namespace Flight_Reservation_App
 
         public async Task DeleteAsync(Where[] conditions)
         {
-            var query = $"DELETE FROM {nameof(T)}";
+            var query = $"DELETE FROM {typeof(T).Name}";
 
             if (conditions != null && conditions.Length > 0)
             {
