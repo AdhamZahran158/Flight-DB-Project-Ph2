@@ -10,7 +10,7 @@ namespace Flight_Reservation_App
 {
     internal class Repository<T> where T : class
     {
-        private readonly string connectionString;
+        private readonly string connectionString = GlobalUsing.connectionString;
 
         public Repository(string connectionString)
         {
