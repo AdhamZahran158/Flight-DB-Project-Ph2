@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Flight_Reservation_App.Models;
 
 public partial class Seat
 {
-    public int AircraftId { get; set; }
+    public int AircraftID { get; set; }
 
     public string SeatNumber { get; set; } = null!;
 

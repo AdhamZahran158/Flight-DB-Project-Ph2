@@ -9,12 +9,28 @@ using System.Threading.Tasks;
 
 namespace Flight_ReservationGui.Pages
 {
+    // Display wrapper that resolves IDs to names for the list view
+    public class FlightDisplay
+    {
+        public Flight Source { get; set; }
+        public int FlightId => Source.FlightId;
+        public string FlightNumber => Source.FlightNumber ?? "";
+        public decimal? DistanceKm => Source.DistanceKm;
+        public string Status => Source.Status ?? "";
+        public string AircraftModel { get; set; } = "";
+        public string DepartureAirportName { get; set; } = "";
+        public string DepartureTime => Source.DepartureTime?.ToString("g") ?? "";
+        public string ArrivalAirportName { get; set; } = "";
+        public string ArrivalTime => Source.ArrivalTime?.ToString("g") ?? "";
+    }
+
     public sealed partial class FlightsPage : Page
     {
         private readonly FlightDomain _flightDomain = new FlightDomain(Flight_Reservation_App.GlobalUsing.connectionString);
         private ObservableCollection<Flight> _flights = new();
         private System.Collections.Generic.List<Airport> _airports = new();
         private System.Collections.Generic.List<Aircraft> _aircrafts = new();
+        private bool _isEditMode = false;
 
         public FlightsPage()
         {
@@ -25,6 +41,23 @@ namespace Flight_ReservationGui.Pages
         {
             await LoadLookupData();
             await LoadFlights();
+            SetAddMode();
+        }
+
+        private void SetAddMode()
+        {
+            _isEditMode = false;
+            BtnAdd.IsEnabled = true;
+            BtnUpdate.IsEnabled = false;
+            BtnDelete.IsEnabled = false;
+        }
+
+        private void SetEditMode()
+        {
+            _isEditMode = true;
+            BtnAdd.IsEnabled = false;
+            BtnUpdate.IsEnabled = true;
+            BtnDelete.IsEnabled = true;
         }
 
         private async Task LoadLookupData()
@@ -56,7 +89,16 @@ namespace Flight_ReservationGui.Pages
             {
                 var flights = await _flightDomain.GetFlightsAsync();
                 _flights = new ObservableCollection<Flight>(flights);
-                FlightsListView.ItemsSource = _flights;
+
+                var displayItems = flights.Select(f => new FlightDisplay
+                {
+                    Source = f,
+                    AircraftModel = _aircrafts.FirstOrDefault(a => a.AircraftID == f.AircraftID)?.Model ?? f.AircraftID?.ToString() ?? "",
+                    DepartureAirportName = _airports.FirstOrDefault(a => a.AirportId == f.DepartureAirportId)?.Name ?? f.DepartureAirportId?.ToString() ?? "",
+                    ArrivalAirportName = _airports.FirstOrDefault(a => a.AirportId == f.ArrivalAirportId)?.Name ?? f.ArrivalAirportId?.ToString() ?? ""
+                }).ToList();
+
+                FlightsListView.ItemsSource = new ObservableCollection<FlightDisplay>(displayItems);
                 ShowSuccess($"Loaded {_flights.Count} flights.");
             }
             catch (Exception ex)
@@ -151,7 +193,7 @@ namespace Flight_ReservationGui.Pages
                 flight.DistanceKm = dist;
 
             if (CmbAircraft.SelectedItem is Aircraft ac)
-                flight.AircraftId = ac.AircraftId;
+                flight.AircraftID = ac.AircraftID;
 
             if (CmbDepartureAirport.SelectedItem is ComboBoxItem depItem)
                 flight.DepartureAirportId = (int)depItem.Tag;
@@ -170,6 +212,12 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Add_Click(object sender, RoutedEventArgs e)
         {
+            if (_isEditMode)
+            {
+                ShowError("A record is selected. You can only Update or Delete it. Click Clear to add a new one.");
+                return;
+            }
+
             if (!ValidateInput(out var error))
             {
                 ShowError(error);
@@ -192,7 +240,7 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Update_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TxtFlightId.Text) || !int.TryParse(TxtFlightId.Text, out _))
+            if (!_isEditMode || string.IsNullOrWhiteSpace(TxtFlightId.Text) || !int.TryParse(TxtFlightId.Text, out _))
             {
                 ShowError("Please select a flight from the list to update.");
                 return;
@@ -221,7 +269,7 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Delete_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TxtFlightId.Text) || !int.TryParse(TxtFlightId.Text, out var flightId))
+            if (!_isEditMode || string.IsNullOrWhiteSpace(TxtFlightId.Text) || !int.TryParse(TxtFlightId.Text, out var flightId))
             {
                 ShowError("Please select a flight from the list to delete.");
                 return;
@@ -275,11 +323,18 @@ namespace Flight_ReservationGui.Pages
             DpDeparture.Date = null;
             DpArrival.Date = null;
             FlightsListView.SelectedItem = null;
+            SetAddMode();
         }
 
         private void FlightsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (FlightsListView.SelectedItem is Flight f)
+            Flight f = null;
+            if (FlightsListView.SelectedItem is FlightDisplay fd)
+                f = fd.Source;
+            else if (FlightsListView.SelectedItem is Flight fl)
+                f = fl;
+
+            if (f != null)
             {
                 TxtFlightId.Text = f.FlightId.ToString();
                 TxtFlightNumber.Text = f.FlightNumber ?? "";
@@ -296,7 +351,7 @@ namespace Flight_ReservationGui.Pages
                 }
 
                 // Select aircraft
-                CmbAircraft.SelectedItem = _aircrafts.FirstOrDefault(a => a.AircraftId == f.AircraftId);
+                CmbAircraft.SelectedItem = _aircrafts.FirstOrDefault(a => a.AircraftID == f.AircraftID);
 
                 // Select airports
                 foreach (ComboBoxItem item in CmbDepartureAirport.Items)
@@ -327,6 +382,8 @@ namespace Flight_ReservationGui.Pages
                     DpArrival.Date = new DateTimeOffset(f.ArrivalTime.Value);
                     TpArrival.Time = f.ArrivalTime.Value.TimeOfDay;
                 }
+
+                SetEditMode();
             }
         }
 

@@ -24,6 +24,11 @@
                         <FontIcon Glyph="&#xE709;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Aircrafts" Tag="aircrafts">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7EA;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Passengers" Tag="passengers">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE77B;" />

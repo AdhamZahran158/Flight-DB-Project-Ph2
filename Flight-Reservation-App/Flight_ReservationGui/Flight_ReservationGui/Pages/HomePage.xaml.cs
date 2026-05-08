@@ -34,5 +34,10 @@ namespace Flight_ReservationGui.Pages
         {
             Frame.Navigate(typeof(PaymentsPage));
         }
+
+        private void Nav_Aircrafts(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AircraftsPage));
+        }
     }
 }

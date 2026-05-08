@@ -67,7 +67,7 @@ namespace Flight_Reservation_App
                             string columnName = reader.GetName(i);
                             object value = reader.GetValue(i);
 
-                            PropertyInfo prop = typeof(T).GetProperty(columnName);
+                            PropertyInfo prop = typeof(T).GetProperty(columnName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
                             if (prop != null && value != DBNull.Value)
                             {

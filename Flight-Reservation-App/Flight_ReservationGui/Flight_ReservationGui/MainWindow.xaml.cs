@@ -28,6 +28,7 @@ namespace Flight_ReservationGui
 
             if (pageType == typeof(HomePage)) tag = "home";
             else if (pageType == typeof(FlightsPage)) tag = "flights";
+            else if (pageType == typeof(AircraftsPage)) tag = "aircrafts";
             else if (pageType == typeof(PassengersPage)) tag = "passengers";
             else if (pageType == typeof(BookingsPage)) tag = "bookings";
             else if (pageType == typeof(TicketsPage)) tag = "tickets";
@@ -55,6 +56,9 @@ namespace Flight_ReservationGui
                         break;
                     case "flights":
                         ContentFrame.Navigate(typeof(FlightsPage));
+                        break;
+                    case "aircrafts":
+                        ContentFrame.Navigate(typeof(AircraftsPage));
                         break;
                     case "passengers":
                         ContentFrame.Navigate(typeof(PassengersPage));

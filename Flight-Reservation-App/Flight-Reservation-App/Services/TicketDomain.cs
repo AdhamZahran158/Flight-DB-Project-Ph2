@@ -34,14 +34,14 @@ namespace Flight_Reservation_App.Services
                 nameof(Ticket.TicketPrice),
                 nameof(Ticket.BookingId),
                 nameof(Ticket.TripId),
-                nameof(Ticket.AircraftId),
+                nameof(Ticket.AircraftID),
                 nameof(Ticket.SeatNumber)],
             [
                     (object)ticket.TicketId,
                     (object)ticket.TicketPrice??DBNull.Value,
                     (object)ticket.BookingId?? DBNull.Value,
                     (object)lastestTrip.TripId?? DBNull.Value,
-                    (object)ticket.AircraftId?? DBNull.Value,
+                    (object)ticket.AircraftID?? DBNull.Value,
                     (object)ticket.SeatNumber?? DBNull.Value]);
 
         }
@@ -74,7 +74,7 @@ namespace Flight_Reservation_App.Services
         (
             SELECT t.SeatNumber
             FROM Ticket t
-            WHERE t.AircraftId = s.AircraftId
+            WHERE t.AircraftID = s.AircraftID
         )";
 
             using (SqlConnection conn = new SqlConnection(GlobalUsing.connectionString))
@@ -88,7 +88,7 @@ namespace Flight_Reservation_App.Services
                     {
                         seats.Add(new Seat
                         {
-                            AircraftId = (int)reader["AircraftId"],
+                            AircraftID = (int)reader["AircraftID"],
                             SeatNumber = reader["SeatNumber"].ToString(),
                             ClassType = reader["ClassType"].ToString()
                         });

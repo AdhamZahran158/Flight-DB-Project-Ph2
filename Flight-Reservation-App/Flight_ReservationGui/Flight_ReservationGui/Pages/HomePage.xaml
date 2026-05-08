@@ -144,6 +144,26 @@
                         </StackPanel>
                     </Grid>
                 </Button>
+
+                <!-- Aircrafts Card -->
+                <Button Grid.Column="2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Click="Nav_Aircrafts" Padding="0" CornerRadius="12"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <Grid Padding="24,28" MinHeight="170">
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#F7971E" Offset="0" />
+                                <GradientStop Color="#FFD200" Offset="1" />
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <StackPanel Spacing="8">
+                            <FontIcon Glyph="&#xE7EA;" FontSize="36" Foreground="White" />
+                            <TextBlock Text="Aircrafts" FontSize="22" FontWeight="Bold" Foreground="White" />
+                            <TextBlock Text="Manage aircraft fleet and seat configurations" 
+                                       FontSize="13" Foreground="#FFFFFFBB" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </Button>
             </Grid>
 
         </StackPanel>

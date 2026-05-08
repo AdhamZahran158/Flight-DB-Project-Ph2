@@ -5,7 +5,7 @@ namespace Flight_Reservation_App.Models;
 
 public partial class Aircraft
 {
-    public int AircraftId { get; set; }
+    public int AircraftID { get; set; }
 
     public string? Model { get; set; }
 

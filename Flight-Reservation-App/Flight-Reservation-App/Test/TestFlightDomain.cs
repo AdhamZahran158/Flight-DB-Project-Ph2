@@ -78,7 +78,7 @@ namespace Flight_Reservation_App.Test
                     Status = "Scheduled",
                     DepartureTime = DateTime.Now.AddDays(2),
                     ArrivalTime = DateTime.Now.AddDays(2).AddHours(3),
-                    AircraftId = aircrafts[0].AircraftId,
+                    AircraftID = aircrafts[0].AircraftID,
                     DepartureAirportId = airports[0].AirportId,
                     ArrivalAirportId = airports[1].AirportId
                 };
@@ -159,7 +159,7 @@ namespace Flight_Reservation_App.Test
         private static void PrintAircraft(Aircraft a)
         {
             if (a == null) return;
-            Console.WriteLine($"     [Aircraft] ID: {a.AircraftId} | Model: {a.Model} | Capacity: {a.PassengerCapacity}");
+            Console.WriteLine($"     [Aircraft] ID: {a.AircraftID} | Model: {a.Model} | Capacity: {a.PassengerCapacity}");
         }
     }
 }
