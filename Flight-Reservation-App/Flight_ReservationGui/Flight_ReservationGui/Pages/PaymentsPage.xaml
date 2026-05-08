@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Flight_ReservationGui.Pages.PaymentsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent"
+    Loaded="Page_Loaded">
+
+    <Grid Padding="32,24,32,32" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12">
+            <FontIcon Glyph="&#xE8C7;" FontSize="28" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+            <TextBlock Text="Payment Management" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <InfoBar x:Name="StatusInfoBar" Grid.Row="1" IsOpen="False" />
+
+        <!-- Input Form -->
+        <Border Grid.Row="2" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8" Padding="24" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+            <StackPanel Spacing="16">
+                <TextBlock Text="Payment Details" FontSize="18" FontWeight="SemiBold" />
+                <Grid ColumnSpacing="16" RowSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="TxtPaymentId" Header="Payment ID" PlaceholderText="Auto-generated"
+                             IsEnabled="False" Grid.Column="0" />
+                    <ComboBox x:Name="CmbPaymentMethod" Header="Payment Method *" PlaceholderText="Select"
+                              Grid.Column="1" HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="Cash" />
+                        <ComboBoxItem Content="Credit Card" />
+                        <ComboBoxItem Content="Debit Card" />
+                        <ComboBoxItem Content="Online" />
+                        <ComboBoxItem Content="Bank Transfer" />
+                    </ComboBox>
+                    <ComboBox x:Name="CmbPaymentStatus" Header="Payment Status *" PlaceholderText="Select"
+                              Grid.Column="2" HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="Pending" />
+                        <ComboBoxItem Content="Completed" />
+                        <ComboBoxItem Content="Failed" />
+                        <ComboBoxItem Content="Refunded" />
+                    </ComboBox>
+                    <TextBox x:Name="TxtBookingId" Header="Booking ID *" PlaceholderText="e.g. 1"
+                             Grid.Column="3" />
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
+                    <Button Content="🔄 Refresh" Click="Btn_Refresh_Click" />
+                    <Button Content="✖ Clear" Click="Btn_Clear_Click" />
+                    <Button Content="➕ Add Payment" Style="{StaticResource AccentButtonStyle}" Click="Btn_Add_Click" />
+                    <Button Content="✏️ Update Status" Click="Btn_Update_Click" />
+                    <Button Content="🗑️ Delete" Click="Btn_Delete_Click" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Data List -->
+        <Border Grid.Row="3" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8" Padding="16" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+            <ListView x:Name="PaymentsListView" SelectionChanged="PaymentsListView_SelectionChanged"
+                      SelectionMode="Single">
+                <ListView.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid Padding="8,12" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="130" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" />
+                            <TextBlock Grid.Column="1" Text="Method" FontWeight="Bold" />
+                            <TextBlock Grid.Column="2" Text="Status" FontWeight="Bold" />
+                            <TextBlock Grid.Column="3" Text="Booking ID" FontWeight="Bold" />
+                            <TextBlock Grid.Column="4" Text="Date" FontWeight="Bold" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="8,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="130" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding PaymentId}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding PaymentMethod}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{Binding PaymentStatus}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="3" Text="{Binding BookingId}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="4" Text="{Binding PaymentDate}" VerticalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+    </Grid>
+</Page>

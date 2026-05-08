@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Flight_ReservationGui.Pages.PassengersPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent"
+    Loaded="Page_Loaded">
+
+    <Grid Padding="32,24,32,32" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12">
+            <FontIcon Glyph="&#xE77B;" FontSize="28" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+            <TextBlock Text="Passenger Management" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <InfoBar x:Name="StatusInfoBar" Grid.Row="1" IsOpen="False" />
+
+        <!-- Input Form -->
+        <Border Grid.Row="2" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8" Padding="24" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+            <StackPanel Spacing="16">
+                <TextBlock Text="Passenger Details" FontSize="18" FontWeight="SemiBold" />
+                <Grid ColumnSpacing="16" RowSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBox x:Name="TxtPassport" Header="Passport Number *" PlaceholderText="e.g. A12345678"
+                             Grid.Column="0" Grid.Row="0" />
+                    <TextBox x:Name="TxtFname" Header="First Name *" PlaceholderText="First name"
+                             Grid.Column="1" Grid.Row="0" />
+                    <TextBox x:Name="TxtMname" Header="Middle Name" PlaceholderText="Middle name"
+                             Grid.Column="2" Grid.Row="0" />
+                    <TextBox x:Name="TxtLname" Header="Last Name *" PlaceholderText="Last name"
+                             Grid.Column="3" Grid.Row="0" />
+
+                    <TextBox x:Name="TxtEmail" Header="Email *" PlaceholderText="email@example.com"
+                             Grid.Column="0" Grid.Row="1" />
+                    <TextBox x:Name="TxtNationalId" Header="National ID" PlaceholderText="National ID"
+                             Grid.Column="1" Grid.Row="1" />
+                    <TextBox x:Name="TxtNationality" Header="Nationality" PlaceholderText="e.g. Egyptian"
+                             Grid.Column="2" Grid.Row="1" />
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
+                    <Button Content="🔄 Refresh" Click="Btn_Refresh_Click" />
+                    <Button Content="✖ Clear" Click="Btn_Clear_Click" />
+                    <Button Content="➕ Add Passenger" Style="{StaticResource AccentButtonStyle}" Click="Btn_Add_Click" />
+                    <Button Content="✏️ Update" Click="Btn_Update_Click" />
+                    <Button Content="🗑️ Delete" Click="Btn_Delete_Click" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Data List -->
+        <Border Grid.Row="3" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8" Padding="16" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+            <ListView x:Name="PassengersListView" SelectionChanged="PassengersListView_SelectionChanged"
+                      SelectionMode="Single">
+                <ListView.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid Padding="8,12" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="100" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Passport #" FontWeight="Bold" />
+                            <TextBlock Grid.Column="1" Text="First Name" FontWeight="Bold" />
+                            <TextBlock Grid.Column="2" Text="Middle" FontWeight="Bold" />
+                            <TextBlock Grid.Column="3" Text="Last Name" FontWeight="Bold" />
+                            <TextBlock Grid.Column="4" Text="Email" FontWeight="Bold" />
+                            <TextBlock Grid.Column="5" Text="National ID" FontWeight="Bold" />
+                            <TextBlock Grid.Column="6" Text="Nationality" FontWeight="Bold" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="8,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="100" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding PassportNum}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding Fname}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{Binding Mname}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="3" Text="{Binding Lname}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="4" Text="{Binding Email}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="5" Text="{Binding NationalId}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="6" Text="{Binding Nationality}" VerticalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+    </Grid>
+</Page>

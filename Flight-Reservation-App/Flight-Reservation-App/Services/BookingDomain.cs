@@ -1,15 +1,26 @@
-﻿using Flight_Reservation_App;
+using Flight_Reservation_App;
 using Flight_Reservation_App.Models;
 
 public class BookingDomain
 {
     private readonly Repository<Booking> repository;
 
+    public BookingDomain()
+    {
+        repository = new Repository<Booking>(GlobalUsing.connectionString);
+    }
+
+    public BookingDomain(string connectionString)
+    {
+        repository = new Repository<Booking>(connectionString);
+    }
+
     public async Task AddBooking(Booking b)
     {
         await repository.AddAsync(
             columns:
             [
+                nameof(Booking.BookingId),
                 nameof(Booking.BookingStatus),
                 nameof(Booking.TotalPrice),
                 nameof(Booking.PassportNum),
@@ -18,6 +29,7 @@ public class BookingDomain
 
             values:
             [
+                (object)b.BookingId,
                 (object)b.BookingStatus?? DBNull.Value,
                 (object)b.TotalPrice?? DBNull.Value,
                 (object)b.PassportNum?? DBNull.Value,
@@ -28,7 +40,14 @@ public class BookingDomain
 
     public async Task<List<Booking>> GetBookings()
     {
-        return await repository.GetAsync();
+        string[] cols = {
+            "BookingID AS BookingId",
+            "BookingDate",
+            "BookingStatus",
+            "TotalPrice",
+            "PassportNum"
+        };
+        return await repository.GetAsync(cols);
     }
 
     public async Task UpdateBooking(Booking b)

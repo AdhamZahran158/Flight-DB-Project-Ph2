@@ -1,4 +1,4 @@
-﻿using Flight_Reservation_App.Models;
+using Flight_Reservation_App.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Flight_Reservation_App.Services
 {
-    internal class PassengerDomain
+    public class PassengerDomain
     {
         private readonly Repository<Tenant> _tenantRepo;
 

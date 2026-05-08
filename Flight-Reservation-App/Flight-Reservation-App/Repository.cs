@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Flight_Reservation_App
 {
-    internal class Repository<T> where T : class
+    public class Repository<T> where T : class
     {
         private readonly string connectionString = GlobalUsing.connectionString;
 
@@ -71,7 +71,14 @@ namespace Flight_Reservation_App
 
                             if (prop != null && value != DBNull.Value)
                             {
-                                prop.SetValue(obj, value);
+                                if (prop.PropertyType == typeof(DateOnly) || prop.PropertyType == typeof(DateOnly?))
+                                {
+                                    prop.SetValue(obj, DateOnly.FromDateTime((DateTime)value));
+                                }
+                                else
+                                {
+                                    prop.SetValue(obj, value);
+                                }
                             }
                         }
 
@@ -104,7 +111,9 @@ namespace Flight_Reservation_App
             {
                 for (int i = 0; i < values.Length; i++)
                 {
-                    cmd.Parameters.AddWithValue("@p" + i, values[i]);
+                    var val = values[i];
+                    if (val is DateOnly d) val = d.ToDateTime(TimeOnly.MinValue);
+                    cmd.Parameters.AddWithValue("@p" + i, val);
                 }
 
                 await conn.OpenAsync();

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="Flight_ReservationGui.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="✈ SkyVoyage — Flight Reservation System">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <NavigationView
+            x:Name="NavView"
+            IsBackButtonVisible="Collapsed"
+            PaneDisplayMode="Left"
+            IsSettingsVisible="False"
+            SelectionChanged="NavView_SelectionChanged"
+            PaneTitle="SkyVoyage"
+            OpenPaneLength="260">
+
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Home" Tag="home" Icon="Home" />
+                <NavigationViewItemSeparator />
+                <NavigationViewItemHeader Content="Management" />
+                <NavigationViewItem Content="Flights" Tag="flights">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE709;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Passengers" Tag="passengers">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE77B;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Bookings" Tag="bookings">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7BC;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Tickets" Tag="tickets">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEB54;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Payments" Tag="payments">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8C7;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <Frame x:Name="ContentFrame" />
+        </NavigationView>
+    </Grid>
+</Window>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Flight_ReservationGui.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="40,32,40,40">
+        <StackPanel Spacing="32" MaxWidth="1100" HorizontalAlignment="Stretch">
+
+            <!-- Hero Header -->
+            <Grid Padding="40,48,40,40" CornerRadius="16">
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FF6B35" Offset="0.0" />
+                        <GradientStop Color="#F7931E" Offset="0.5" />
+                        <GradientStop Color="#FFB347" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Grid.Background>
+                <StackPanel Spacing="8">
+                    <TextBlock Text="✈ SkyVoyage" FontSize="42" FontWeight="Bold" Foreground="White" />
+                    <TextBlock Text="Flight Reservation Management System" FontSize="18" Foreground="#FFFFFFCC" />
+                    <TextBlock Text="Manage flights, passengers, bookings, tickets and payments — all in one place."
+                               FontSize="14" Foreground="#FFFFFF99" Margin="0,8,0,0" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Quick Stats Section Title -->
+            <TextBlock Text="Quick Navigation" FontSize="22" FontWeight="SemiBold" Margin="0,8,0,0" />
+
+
+            <!-- Manual Cards Layout -->
+            <Grid ColumnSpacing="16" RowSpacing="16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Flights Card -->
+                <Button Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Click="Nav_Flights" Padding="0" CornerRadius="12"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <Grid Padding="24,28" MinHeight="170">
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#4158D0" Offset="0" />
+                                <GradientStop Color="#C850C0" Offset="1" />
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <StackPanel Spacing="8">
+                            <FontIcon Glyph="&#xE709;" FontSize="36" Foreground="White" />
+                            <TextBlock Text="Flights" FontSize="22" FontWeight="Bold" Foreground="White" />
+                            <TextBlock Text="Manage flight routes, schedules, and statuses" 
+                                       FontSize="13" Foreground="#FFFFFFBB" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </Button>
+
+                <!-- Passengers Card -->
+                <Button Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Click="Nav_Passengers" Padding="0" CornerRadius="12"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <Grid Padding="24,28" MinHeight="170">
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#0093E9" Offset="0" />
+                                <GradientStop Color="#80D0C7" Offset="1" />
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <StackPanel Spacing="8">
+                            <FontIcon Glyph="&#xE77B;" FontSize="36" Foreground="White" />
+                            <TextBlock Text="Passengers" FontSize="22" FontWeight="Bold" Foreground="White" />
+                            <TextBlock Text="Register and manage passenger profiles" 
+                                       FontSize="13" Foreground="#FFFFFFBB" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </Button>
+
+                <!-- Bookings Card -->
+                <Button Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Click="Nav_Bookings" Padding="0" CornerRadius="12"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <Grid Padding="24,28" MinHeight="170">
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#FA8BFF" Offset="0" />
+                                <GradientStop Color="#2BD2FF" Offset="0.5" />
+                                <GradientStop Color="#2BFF88" Offset="1" />
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <StackPanel Spacing="8">
+                            <FontIcon Glyph="&#xE7BC;" FontSize="36" Foreground="White" />
+                            <TextBlock Text="Bookings" FontSize="22" FontWeight="Bold" Foreground="White" />
+                            <TextBlock Text="Create and track flight reservations" 
+                                       FontSize="13" Foreground="#FFFFFFBB" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </Button>
+
+                <!-- Tickets Card -->
+                <Button Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Click="Nav_Tickets" Padding="0" CornerRadius="12"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <Grid Padding="24,28" MinHeight="170">
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#FF9A9E" Offset="0" />
+                                <GradientStop Color="#FAD0C4" Offset="1" />
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <StackPanel Spacing="8">
+                            <FontIcon Glyph="&#xEB54;" FontSize="36" Foreground="White" />
+                            <TextBlock Text="Tickets" FontSize="22" FontWeight="Bold" Foreground="White" />
+                            <TextBlock Text="Generate and assign seat tickets" 
+                                       FontSize="13" Foreground="#FFFFFFBB" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </Button>
+
+                <!-- Payments Card -->
+                <Button Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                        Click="Nav_Payments" Padding="0" CornerRadius="12"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <Grid Padding="24,28" MinHeight="170">
+                        <Grid.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#A18CD1" Offset="0" />
+                                <GradientStop Color="#FBC2EB" Offset="1" />
+                            </LinearGradientBrush>
+                        </Grid.Background>
+                        <StackPanel Spacing="8">
+                            <FontIcon Glyph="&#xE8C7;" FontSize="36" Foreground="White" />
+                            <TextBlock Text="Payments" FontSize="22" FontWeight="Bold" Foreground="White" />
+                            <TextBlock Text="Process and track payment records" 
+                                       FontSize="13" Foreground="#FFFFFFBB" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Grid>
+                </Button>
+            </Grid>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
