@@ -81,9 +81,9 @@
                 <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
                     <Button Content="🔄 Refresh" Click="Btn_Refresh_Click" />
                     <Button Content="✖ Clear" Click="Btn_Clear_Click" />
-                    <Button Content="➕ Add Flight" Style="{StaticResource AccentButtonStyle}" Click="Btn_Add_Click" />
-                    <Button Content="✏️ Update" Click="Btn_Update_Click" />
-                    <Button Content="🗑️ Delete" Click="Btn_Delete_Click" />
+                    <Button x:Name="BtnAdd" Content="➕ Add Flight" Style="{StaticResource AccentButtonStyle}" Click="Btn_Add_Click" />
+                    <Button x:Name="BtnUpdate" Content="✏️ Update" Click="Btn_Update_Click" />
+                    <Button x:Name="BtnDelete" Content="🗑️ Delete" Click="Btn_Delete_Click" />
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -97,15 +97,15 @@
                     <DataTemplate>
                         <Grid Padding="8,12" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="4">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="40" />
                                 <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="160" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" />
                             <TextBlock Grid.Column="1" Text="Flight #" FontWeight="Bold" />
@@ -123,24 +123,24 @@
                     <DataTemplate>
                         <Grid Padding="8,10">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="40" />
                                 <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="160" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{Binding FlightId}" VerticalAlignment="Center" />
                             <TextBlock Grid.Column="1" Text="{Binding FlightNumber}" VerticalAlignment="Center" />
                             <TextBlock Grid.Column="2" Text="{Binding DistanceKm}" VerticalAlignment="Center" />
                             <TextBlock Grid.Column="3" Text="{Binding Status}" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="4" Text="{Binding AircraftId}" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="5" Text="{Binding DepartureAirportId}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="4" Text="{Binding AircraftModel}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Grid.Column="5" Text="{Binding DepartureAirportName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                             <TextBlock Grid.Column="6" Text="{Binding DepartureTime}" VerticalAlignment="Center" />
-                            <TextBlock Grid.Column="7" Text="{Binding ArrivalAirportId}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="7" Text="{Binding ArrivalAirportName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
                             <TextBlock Grid.Column="8" Text="{Binding ArrivalTime}" VerticalAlignment="Center" />
                         </Grid>
                     </DataTemplate>

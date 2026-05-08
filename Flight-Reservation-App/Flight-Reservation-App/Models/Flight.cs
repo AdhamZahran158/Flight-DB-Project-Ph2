@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Flight_Reservation_App.Models;
@@ -13,7 +13,7 @@ public partial class Flight
 
     public string? Status { get; set; }
 
-    public int? AircraftId { get; set; }
+    public int? AircraftID { get; set; }
 
     public int? DepartureAirportId { get; set; }
 

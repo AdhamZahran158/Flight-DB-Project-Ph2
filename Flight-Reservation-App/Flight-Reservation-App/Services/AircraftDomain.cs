@@ -1,4 +1,4 @@
-﻿using Flight_Reservation_App.Models;
+using Flight_Reservation_App.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Flight_Reservation_App.Services
 {
-    internal class AircraftDomain
+    public class AircraftDomain
     {
         private readonly Repository<Aircraft> _aircraftRepo;
         private readonly Repository<Seat> _seatRepo;
@@ -50,7 +50,7 @@ namespace Flight_Reservation_App.Services
                     {
                         seats.Add(new Seat
                         {
-                            AircraftId = (int)reader["AircraftId"],
+                            AircraftID = (int)reader["AircraftID"],
                             SeatNumber = reader["SeatNumber"].ToString(),
                             ClassType = reader["ClassType"].ToString()
                         });
@@ -64,11 +64,17 @@ namespace Flight_Reservation_App.Services
 
         public async Task AddAircraft(Aircraft aircraft, int ecoSeats, int bussinessSeats, int firstClassSeats)
         {
-            await _aircraftRepo.AddAsync([nameof(Aircraft.Model),
+            // Compute next available AircraftID
+            var allAircrafts = await _aircraftRepo.GetAsync();
+            int nextId = allAircrafts.Count > 0 ? allAircrafts.Max(a => a.AircraftID) + 1 : 1;
+
+            await _aircraftRepo.AddAsync([nameof(Aircraft.AircraftID),
+                nameof(Aircraft.Model),
                 nameof(Aircraft.PassengerCapacity),
                 nameof(Aircraft.CargoCapacity),
             nameof(Aircraft.MaxTakeOffWeight)],
-            [aircraft.Model,
+            [nextId,
+                aircraft.Model,
                 ecoSeats+bussinessSeats+firstClassSeats,
                 aircraft.CargoCapacity,
                 aircraft.MaxTakeOffWeight]);
@@ -76,28 +82,28 @@ namespace Flight_Reservation_App.Services
             var lastAddedAircraft = (await _aircraftRepo.GetAsync()).LastOrDefault();
             for (int i = 0; i < ecoSeats; i++)
             {
-                await _seatRepo.AddAsync([nameof(Seat.AircraftId),
+                await _seatRepo.AddAsync([nameof(Seat.AircraftID),
                     nameof(Seat.SeatNumber),
                     nameof(Seat.ClassType)],
-                    [lastAddedAircraft.AircraftId,
+                    [lastAddedAircraft.AircraftID,
                     (i+1).ToString(),
                     "Economy"]);
             }
             for (int i = ecoSeats; i < ecoSeats+bussinessSeats; i++)
             {
-                await _seatRepo.AddAsync([nameof(Seat.AircraftId),
+                await _seatRepo.AddAsync([nameof(Seat.AircraftID),
                     nameof(Seat.SeatNumber),
                     nameof(Seat.ClassType)],
-                    [lastAddedAircraft.AircraftId,
+                    [lastAddedAircraft.AircraftID,
                     (i+1).ToString(),
                     "Business"]);
             }
             for (int i = ecoSeats + bussinessSeats; i < ecoSeats+bussinessSeats+firstClassSeats; i++)
             {
-                await _seatRepo.AddAsync([nameof(Seat.AircraftId),
+                await _seatRepo.AddAsync([nameof(Seat.AircraftID),
                     nameof(Seat.SeatNumber),
                     nameof(Seat.ClassType)],
-                    [lastAddedAircraft.AircraftId,
+                    [lastAddedAircraft.AircraftID,
                     (i + 1).ToString(),
                     "First Class"]);
             }
@@ -111,16 +117,16 @@ namespace Flight_Reservation_App.Services
             [aircraft.Model,
             aircraft.CargoCapacity,
             aircraft.MaxTakeOffWeight],
-            [new Where() { Column = nameof(Aircraft.AircraftId),
+            [new Where() { Column = nameof(Aircraft.AircraftID),
             Operator="=",
-            Value= aircraft.AircraftId
+            Value= aircraft.AircraftID
             }]);
         }
 
         public async Task DeleteAircraft(int id)
         {
             await _aircraftRepo.DeleteAsync([new Where() {
-                Column= nameof(Aircraft.AircraftId),
+                Column= nameof(Aircraft.AircraftID),
                 Operator="=",
                 Value= id
             }]);

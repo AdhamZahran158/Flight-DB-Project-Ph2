@@ -12,7 +12,9 @@ namespace Flight_ReservationGui.Pages
     public sealed partial class PaymentsPage : Page
     {
         private readonly PaymentDomain _paymentDomain = new PaymentDomain(Flight_Reservation_App.GlobalUsing.connectionString);
+        private readonly BookingDomain _bookingDomain = new BookingDomain(Flight_Reservation_App.GlobalUsing.connectionString);
         private ObservableCollection<Payment> _payments = new();
+        private bool _isEditMode = false;
 
         public PaymentsPage()
         {
@@ -21,7 +23,30 @@ namespace Flight_ReservationGui.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            await LoadBookings();
             await LoadPayments();
+            SetAddMode();
+        }
+
+        private async Task LoadBookings()
+        {
+            try
+            {
+                var bookings = await _bookingDomain.GetBookings();
+                CmbBooking.Items.Clear();
+                foreach (var b in bookings)
+                {
+                    CmbBooking.Items.Add(new ComboBoxItem
+                    {
+                        Content = $"#{b.BookingId} — {b.BookingStatus} ({b.PassportNum})",
+                        Tag = b.BookingId
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError("Failed to load bookings: " + ex.Message);
+            }
         }
 
         private async Task LoadPayments()
@@ -39,11 +64,24 @@ namespace Flight_ReservationGui.Pages
             }
         }
 
+        private void SetAddMode()
+        {
+            _isEditMode = false;
+            BtnAdd.IsEnabled = true;
+            BtnUpdate.IsEnabled = false;
+            BtnDelete.IsEnabled = false;
+        }
+
+        private void SetEditMode()
+        {
+            _isEditMode = true;
+            BtnAdd.IsEnabled = false;
+            BtnUpdate.IsEnabled = true;
+            BtnDelete.IsEnabled = true;
+        }
+
         private bool ValidateInput(out string error)
         {
-            error = "";
-
-            // Payment ID is now auto-generated, so we skip validating it
             error = "";
 
             if (CmbPaymentMethod.SelectedItem == null)
@@ -58,9 +96,9 @@ namespace Flight_ReservationGui.Pages
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(TxtBookingId.Text) || !int.TryParse(TxtBookingId.Text, out _))
+            if (CmbBooking.SelectedItem == null)
             {
-                error = "Booking ID must be a valid integer.";
+                error = "Please select a booking.";
                 return false;
             }
 
@@ -69,18 +107,25 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Add_Click(object sender, RoutedEventArgs e)
         {
+            if (_isEditMode)
+            {
+                ShowError("A record is selected. You can only Update or Delete it. Click Clear to add a new one.");
+                return;
+            }
+
             if (!ValidateInput(out var error)) { ShowError(error); return; }
 
             try
             {
                 var nextId = _payments.Count > 0 ? _payments.Max(p => p.PaymentId) + 1 : 1;
+                var bookingId = (int)((ComboBoxItem)CmbBooking.SelectedItem).Tag;
 
                 var payment = new Payment
                 {
                     PaymentId = nextId,
                     PaymentMethod = (CmbPaymentMethod.SelectedItem as ComboBoxItem)?.Content?.ToString(),
                     PaymentStatus = (CmbPaymentStatus.SelectedItem as ComboBoxItem)?.Content?.ToString(),
-                    BookingId = int.Parse(TxtBookingId.Text)
+                    BookingId = bookingId
                 };
 
                 await _paymentDomain.AddPaymentAsync(payment);
@@ -96,9 +141,9 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Update_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TxtPaymentId.Text) || !int.TryParse(TxtPaymentId.Text, out var paymentId))
+            if (!_isEditMode || string.IsNullOrWhiteSpace(TxtPaymentId.Text) || !int.TryParse(TxtPaymentId.Text, out var paymentId))
             {
-                ShowError("Please select a payment to update.");
+                ShowError("Please select a payment from the list to update.");
                 return;
             }
 
@@ -123,9 +168,9 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Delete_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TxtPaymentId.Text) || !int.TryParse(TxtPaymentId.Text, out var paymentId))
+            if (!_isEditMode || string.IsNullOrWhiteSpace(TxtPaymentId.Text) || !int.TryParse(TxtPaymentId.Text, out var paymentId))
             {
-                ShowError("Please select a payment to delete.");
+                ShowError("Please select a payment from the list to delete.");
                 return;
             }
 
@@ -155,7 +200,12 @@ namespace Flight_ReservationGui.Pages
             }
         }
 
-        private async void Btn_Refresh_Click(object sender, RoutedEventArgs e) => await LoadPayments();
+        private async void Btn_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadBookings();
+            await LoadPayments();
+        }
+
         private void Btn_Clear_Click(object sender, RoutedEventArgs e) => ClearForm();
 
         private void ClearForm()
@@ -163,8 +213,9 @@ namespace Flight_ReservationGui.Pages
             TxtPaymentId.Text = "";
             CmbPaymentMethod.SelectedItem = null;
             CmbPaymentStatus.SelectedItem = null;
-            TxtBookingId.Text = "";
+            CmbBooking.SelectedItem = null;
             PaymentsListView.SelectedItem = null;
+            SetAddMode();
         }
 
         private void PaymentsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -172,7 +223,16 @@ namespace Flight_ReservationGui.Pages
             if (PaymentsListView.SelectedItem is Payment p)
             {
                 TxtPaymentId.Text = p.PaymentId.ToString();
-                TxtBookingId.Text = p.BookingId?.ToString() ?? "";
+
+                // Select booking in dropdown
+                foreach (ComboBoxItem item in CmbBooking.Items)
+                {
+                    if (item.Tag is int id && id == p.BookingId)
+                    {
+                        CmbBooking.SelectedItem = item;
+                        break;
+                    }
+                }
 
                 foreach (ComboBoxItem item in CmbPaymentMethod.Items)
                 {
@@ -191,6 +251,8 @@ namespace Flight_ReservationGui.Pages
                         break;
                     }
                 }
+
+                SetEditMode();
             }
         }
 

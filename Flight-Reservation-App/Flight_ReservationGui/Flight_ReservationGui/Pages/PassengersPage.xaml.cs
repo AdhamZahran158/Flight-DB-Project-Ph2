@@ -23,6 +23,23 @@ namespace Flight_ReservationGui.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             await LoadPassengers();
+            SetAddMode();
+        }
+
+        private void SetAddMode()
+        {
+            _isEditMode = false;
+            BtnAdd.IsEnabled = true;
+            BtnUpdate.IsEnabled = false;
+            BtnDelete.IsEnabled = false;
+        }
+
+        private void SetEditMode()
+        {
+            _isEditMode = true;
+            BtnAdd.IsEnabled = false;
+            BtnUpdate.IsEnabled = true;
+            BtnDelete.IsEnabled = true;
         }
 
         private async Task LoadPassengers()
@@ -95,6 +112,11 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Add_Click(object sender, RoutedEventArgs e)
         {
+            if (_isEditMode)
+            {
+                ShowError("A record is selected. You can only Update or Delete it. Click Clear to add a new one.");
+                return;
+            }
             if (!ValidateInput(out var error)) { ShowError(error); return; }
 
             try
@@ -162,7 +184,10 @@ namespace Flight_ReservationGui.Pages
                 }
                 catch (Exception ex)
                 {
-                    ShowError("Failed to delete passenger: " + ex.Message);
+                    if (ex.Message.Contains("REFERENCE constraint") || ex.Message.Contains("FK_"))
+                        ShowError("Cannot delete this passenger because they have existing bookings. Delete their bookings first.");
+                    else
+                        ShowError("Failed to delete passenger: " + ex.Message);
                 }
             }
         }
@@ -181,8 +206,8 @@ namespace Flight_ReservationGui.Pages
             TxtNationalId.Text = "";
             TxtNationality.Text = "";
             TxtPassport.IsEnabled = true;
-            _isEditMode = false;
             PassengersListView.SelectedItem = null;
+            SetAddMode();
         }
 
         private void PassengersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -197,7 +222,7 @@ namespace Flight_ReservationGui.Pages
                 TxtNationalId.Text = t.NationalId ?? "";
                 TxtNationality.Text = t.Nationality ?? "";
                 TxtPassport.IsEnabled = false; // PK — can't change on update
-                _isEditMode = true;
+                SetEditMode();
             }
         }
 

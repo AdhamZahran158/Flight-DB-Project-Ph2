@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="Flight_ReservationGui.Pages.AircraftsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent"
+    Loaded="Page_Loaded">
+
+    <Grid Padding="32,24,32,32" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="12">
+            <FontIcon Glyph="&#xE709;" FontSize="28" Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+            <TextBlock Text="Aircraft Management" FontSize="28" FontWeight="Bold" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <InfoBar x:Name="StatusInfoBar" Grid.Row="1" IsOpen="False" />
+
+        <!-- Input Form -->
+        <Border Grid.Row="2" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8" Padding="24" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+            <StackPanel Spacing="16">
+                <TextBlock Text="Aircraft Details" FontSize="18" FontWeight="SemiBold" />
+
+                <!-- Row 1: Basic Info -->
+                <Grid ColumnSpacing="16" RowSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="TxtAircraftId" Header="Aircraft ID" PlaceholderText="Auto-generated"
+                             IsEnabled="False" Grid.Column="0" />
+                    <TextBox x:Name="TxtModel" Header="Model *" PlaceholderText="e.g. Boeing 737-800"
+                             Grid.Column="1" />
+                    <TextBox x:Name="TxtCargoCapacity" Header="Cargo Capacity (kg)" PlaceholderText="e.g. 20000"
+                             Grid.Column="2" />
+                    <TextBox x:Name="TxtMaxTakeOffWeight" Header="Max Takeoff Weight (kg)" PlaceholderText="e.g. 79000"
+                             Grid.Column="3" />
+                </Grid>
+
+                <!-- Row 2: Seat Configuration (only for Add) -->
+                <Border x:Name="SeatConfigPanel" Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        CornerRadius="6" Padding="16">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="Seat Configuration (for new aircraft only)" FontSize="14" FontWeight="SemiBold"
+                                   Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="TxtEconomySeats" Header="Economy Seats" PlaceholderText="e.g. 150"
+                                     Grid.Column="0" />
+                            <TextBox x:Name="TxtBusinessSeats" Header="Business Seats" PlaceholderText="e.g. 30"
+                                     Grid.Column="1" />
+                            <TextBox x:Name="TxtFirstClassSeats" Header="First Class Seats" PlaceholderText="e.g. 10"
+                                     Grid.Column="2" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right" Margin="0,8,0,0">
+                    <Button Content="🔄 Refresh" Click="Btn_Refresh_Click" />
+                    <Button Content="✖ Clear" Click="Btn_Clear_Click" />
+                    <Button x:Name="BtnAdd" Content="➕ Add Aircraft" Style="{StaticResource AccentButtonStyle}" Click="Btn_Add_Click" />
+                    <Button x:Name="BtnUpdate" Content="✏️ Update" Click="Btn_Update_Click" IsEnabled="False" />
+                    <Button x:Name="BtnDelete" Content="🗑️ Delete" Click="Btn_Delete_Click" IsEnabled="False" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Data List -->
+        <Border Grid.Row="3" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                CornerRadius="8" Padding="16" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+            <ListView x:Name="AircraftsListView" SelectionChanged="AircraftsListView_SelectionChanged"
+                      SelectionMode="Single">
+                <ListView.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid Padding="8,12" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="160" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ID" FontWeight="Bold" />
+                            <TextBlock Grid.Column="1" Text="Model" FontWeight="Bold" />
+                            <TextBlock Grid.Column="2" Text="Capacity" FontWeight="Bold" />
+                            <TextBlock Grid.Column="3" Text="Cargo (kg)" FontWeight="Bold" />
+                            <TextBlock Grid.Column="4" Text="Max Takeoff (kg)" FontWeight="Bold" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="8,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80" />
+                                <ColumnDefinition Width="200" />
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="140" />
+                                <ColumnDefinition Width="160" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding AircraftID}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding Model}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Text="{Binding PassengerCapacity}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="3" Text="{Binding CargoCapacity}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="4" Text="{Binding MaxTakeOffWeight}" VerticalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+    </Grid>
+</Page>

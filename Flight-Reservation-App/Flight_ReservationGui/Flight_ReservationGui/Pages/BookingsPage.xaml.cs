@@ -14,6 +14,7 @@ namespace Flight_ReservationGui.Pages
         private readonly BookingDomain _bookingDomain = new BookingDomain(Flight_Reservation_App.GlobalUsing.connectionString);
         private readonly PassengerDomain _passengerDomain = new PassengerDomain(Flight_Reservation_App.GlobalUsing.connectionString);
         private ObservableCollection<Booking> _bookings = new();
+        private bool _isEditMode = false;
 
         public BookingsPage()
         {
@@ -24,6 +25,7 @@ namespace Flight_ReservationGui.Pages
         {
             await LoadPassengers();
             await LoadBookings();
+            SetAddMode();
         }
 
         private async Task LoadPassengers()
@@ -62,15 +64,25 @@ namespace Flight_ReservationGui.Pages
             }
         }
 
+        private void SetAddMode()
+        {
+            _isEditMode = false;
+            BtnAdd.IsEnabled = true;
+            BtnUpdate.IsEnabled = false;
+            BtnDelete.IsEnabled = false;
+        }
+
+        private void SetEditMode()
+        {
+            _isEditMode = true;
+            BtnAdd.IsEnabled = false;
+            BtnUpdate.IsEnabled = true;
+            BtnDelete.IsEnabled = true;
+        }
+
         private bool ValidateInput(out string error)
         {
             error = "";
-
-            if (string.IsNullOrWhiteSpace(TxtBookingId.Text) || !int.TryParse(TxtBookingId.Text, out _))
-            {
-                error = "Booking ID must be a valid integer.";
-                return false;
-            }
 
             if (CmbBookingStatus.SelectedItem == null)
             {
@@ -101,12 +113,18 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Add_Click(object sender, RoutedEventArgs e)
         {
+            if (_isEditMode)
+            {
+                ShowError("A record is selected. You can only Update or Delete it. Click Clear to add a new one.");
+                return;
+            }
+
             if (!ValidateInput(out var error)) { ShowError(error); return; }
 
             try
             {
                 var nextId = _bookings.Count > 0 ? _bookings.Max(b => b.BookingId) + 1 : 1;
-                
+
                 var booking = new Booking
                 {
                     BookingId = nextId,
@@ -128,9 +146,9 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Update_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TxtBookingId.Text) || !int.TryParse(TxtBookingId.Text, out var bookingId))
+            if (!_isEditMode || string.IsNullOrWhiteSpace(TxtBookingId.Text) || !int.TryParse(TxtBookingId.Text, out var bookingId))
             {
-                ShowError("Please select a booking to update.");
+                ShowError("Please select a booking from the list to update.");
                 return;
             }
 
@@ -160,9 +178,9 @@ namespace Flight_ReservationGui.Pages
 
         private async void Btn_Delete_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TxtBookingId.Text) || !int.TryParse(TxtBookingId.Text, out var bookingId))
+            if (!_isEditMode || string.IsNullOrWhiteSpace(TxtBookingId.Text) || !int.TryParse(TxtBookingId.Text, out var bookingId))
             {
-                ShowError("Please select a booking to delete.");
+                ShowError("Please select a booking from the list to delete.");
                 return;
             }
 
@@ -192,7 +210,12 @@ namespace Flight_ReservationGui.Pages
             }
         }
 
-        private async void Btn_Refresh_Click(object sender, RoutedEventArgs e) => await LoadBookings();
+        private async void Btn_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadPassengers();
+            await LoadBookings();
+        }
+
         private void Btn_Clear_Click(object sender, RoutedEventArgs e) => ClearForm();
 
         private void ClearForm()
@@ -202,6 +225,7 @@ namespace Flight_ReservationGui.Pages
             TxtTotalPrice.Text = "";
             CmbPassport.SelectedItem = null;
             BookingsListView.SelectedItem = null;
+            SetAddMode();
         }
 
         private void BookingsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -228,6 +252,8 @@ namespace Flight_ReservationGui.Pages
                         break;
                     }
                 }
+
+                SetEditMode();
             }
         }
 

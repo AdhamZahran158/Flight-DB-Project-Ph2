@@ -14,6 +14,7 @@ namespace Flight_ReservationGui.Pages
     {
         private readonly TicketDomain _ticketDomain = new TicketDomain(Flight_Reservation_App.GlobalUsing.connectionString);
         private readonly FlightDomain _flightDomain = new FlightDomain(Flight_Reservation_App.GlobalUsing.connectionString);
+        private readonly BookingDomain _bookingDomain = new BookingDomain(Flight_Reservation_App.GlobalUsing.connectionString);
         private List<Seat> _availableSeats = new();
         private List<Aircraft> _aircrafts = new();
 
@@ -24,8 +25,31 @@ namespace Flight_ReservationGui.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            await LoadBookings();
             await LoadAircrafts();
             await LoadAvailableSeats();
+            await LoadTickets();
+        }
+
+        private async Task LoadBookings()
+        {
+            try
+            {
+                var bookings = await _bookingDomain.GetBookings();
+                CmbBooking.Items.Clear();
+                foreach (var b in bookings)
+                {
+                    CmbBooking.Items.Add(new ComboBoxItem
+                    {
+                        Content = $"#{b.BookingId} — {b.BookingStatus} ({b.PassportNum})",
+                        Tag = b.BookingId
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError("Failed to load bookings: " + ex.Message);
+            }
         }
 
         private async Task LoadAircrafts()
@@ -48,11 +72,24 @@ namespace Flight_ReservationGui.Pages
                 _availableSeats = await _ticketDomain.GetAvailableSeats();
                 SeatsListView.ItemsSource = new ObservableCollection<Seat>(_availableSeats);
                 UpdateSeatComboBox();
-                ShowSuccess($"Found {_availableSeats.Count} available seats.");
             }
             catch (Exception ex)
             {
                 ShowError("Failed to load available seats: " + ex.Message);
+            }
+        }
+
+        private async Task LoadTickets()
+        {
+            try
+            {
+                var tickets = await _ticketDomain.GetTickets();
+                TicketsListView.ItemsSource = new ObservableCollection<Ticket>(tickets);
+                ShowSuccess($"Loaded {tickets.Count} tickets and {_availableSeats.Count} available seats.");
+            }
+            catch (Exception ex)
+            {
+                ShowError("Failed to load tickets: " + ex.Message);
             }
         }
 
@@ -64,7 +101,7 @@ namespace Flight_ReservationGui.Pages
             // Filter by selected aircraft if any
             if (CmbAircraft.SelectedItem is Aircraft ac)
             {
-                filteredSeats = _availableSeats.Where(s => s.AircraftId == ac.AircraftId).ToList();
+                filteredSeats = _availableSeats.Where(s => s.AircraftID == ac.AircraftID).ToList();
             }
 
             foreach (var seat in filteredSeats)
@@ -97,9 +134,9 @@ namespace Flight_ReservationGui.Pages
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(TxtBookingId.Text) || !int.TryParse(TxtBookingId.Text, out _))
+            if (CmbBooking.SelectedItem == null)
             {
-                error = "Booking ID must be a valid integer.";
+                error = "Please select a booking.";
                 return false;
             }
 
@@ -119,24 +156,30 @@ namespace Flight_ReservationGui.Pages
             try
             {
                 var nextId = await _ticketDomain.GetMaxTicketId() + 1;
+                var bookingId = (int)((ComboBoxItem)CmbBooking.SelectedItem).Tag;
 
                 var selectedSeat = (Seat)((ComboBoxItem)CmbSeat.SelectedItem).Tag;
                 var ticket = new Ticket
                 {
                     TicketId = nextId,
                     TicketPrice = decimal.Parse(TxtTicketPrice.Text),
-                    BookingId = int.Parse(TxtBookingId.Text),
-                    AircraftId = selectedSeat.AircraftId,
+                    BookingId = bookingId,
+                    AircraftID = selectedSeat.AircraftID,
                     SeatNumber = selectedSeat.SeatNumber
                 };
 
-                if (!string.IsNullOrWhiteSpace(TxtTripId.Text) && int.TryParse(TxtTripId.Text, out var tripId))
-                    ticket.TripId = tripId;
+                // Get the selected trip type (optional)
+                string? tripType = null;
+                if (CmbTripType.SelectedItem is ComboBoxItem tripItem)
+                {
+                    tripType = tripItem.Content?.ToString();
+                }
 
-                await _ticketDomain.AddTicket(ticket);
+                await _ticketDomain.AddTicket(ticket, tripType);
                 ShowSuccess("Ticket created successfully!");
                 ClearForm();
                 await LoadAvailableSeats();
+                await LoadTickets();
             }
             catch (Exception ex)
             {
@@ -144,15 +187,21 @@ namespace Flight_ReservationGui.Pages
             }
         }
 
-        private async void Btn_Refresh_Click(object sender, RoutedEventArgs e) => await LoadAvailableSeats();
+        private async void Btn_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadBookings();
+            await LoadAvailableSeats();
+            await LoadTickets();
+        }
+
         private void Btn_Clear_Click(object sender, RoutedEventArgs e) => ClearForm();
 
         private void ClearForm()
         {
             TxtTicketId.Text = "";
             TxtTicketPrice.Text = "";
-            TxtBookingId.Text = "";
-            TxtTripId.Text = "";
+            CmbBooking.SelectedItem = null;
+            CmbTripType.SelectedItem = null;
             CmbAircraft.SelectedItem = null;
             CmbSeat.SelectedItem = null;
         }
@@ -162,10 +211,10 @@ namespace Flight_ReservationGui.Pages
             if (SeatsListView.SelectedItem is Seat seat)
             {
                 // Auto-select the aircraft and seat
-                CmbAircraft.SelectedItem = _aircrafts.FirstOrDefault(a => a.AircraftId == seat.AircraftId);
+                CmbAircraft.SelectedItem = _aircrafts.FirstOrDefault(a => a.AircraftID == seat.AircraftID);
                 foreach (ComboBoxItem item in CmbSeat.Items)
                 {
-                    if (item.Tag is Seat s && s.SeatNumber == seat.SeatNumber && s.AircraftId == seat.AircraftId)
+                    if (item.Tag is Seat s && s.SeatNumber == seat.SeatNumber && s.AircraftID == seat.AircraftID)
                     {
                         CmbSeat.SelectedItem = item;
                         break;

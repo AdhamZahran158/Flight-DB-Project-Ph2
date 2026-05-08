@@ -32,7 +32,7 @@ namespace Flight_Reservation_App.Services
         {
             string[] cols = {
                 "FlightID AS FlightId", "FlightNumber", "DistanceKM AS DistanceKm", 
-                "Status", "AircraftID AS AircraftId", "DepartureAirportID AS DepartureAirportId", 
+                "Status", "AircraftID", "DepartureAirportID AS DepartureAirportId", 
                 "DepartureTime", "ArrivalAirportID AS ArrivalAirportId", "ArrivalTime"
             };
             return await _flightRepo.GetAsync(cols);
@@ -55,7 +55,7 @@ namespace Flight_Reservation_App.Services
                 GetDbValue(flight.FlightNumber), 
                 GetDbValue(flight.DistanceKm), 
                 GetDbValue(flight.Status), 
-                GetDbValue(flight.AircraftId), 
+                GetDbValue(flight.AircraftID), 
                 GetDbValue(flight.DepartureAirportId), 
                 GetDbValue(flight.DepartureTime), 
                 GetDbValue(flight.ArrivalAirportId), 
@@ -81,7 +81,7 @@ namespace Flight_Reservation_App.Services
                 GetDbValue(flight.FlightNumber), 
                 GetDbValue(flight.DistanceKm), 
                 GetDbValue(flight.Status), 
-                GetDbValue(flight.AircraftId), 
+                GetDbValue(flight.AircraftID), 
                 GetDbValue(flight.DepartureAirportId), 
                 GetDbValue(flight.DepartureTime), 
                 GetDbValue(flight.ArrivalAirportId), 
@@ -130,7 +130,7 @@ namespace Flight_Reservation_App.Services
         public async Task<List<Aircraft>> GetAircraftsAsync()
         {
             string[] cols = {
-                "AircraftID AS AircraftId", "Model", "PassengerCapacity", "CargoCapacity", "MaxTakeOffWeight"
+                "AircraftID", "Model", "PassengerCapacity", "CargoCapacity", "MaxTakeOffWeight"
             };
             return await _aircraftRepo.GetAsync(cols);
         }

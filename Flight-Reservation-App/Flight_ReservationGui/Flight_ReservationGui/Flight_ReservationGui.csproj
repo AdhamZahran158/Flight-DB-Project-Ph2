@@ -25,4 +25,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Flight-Reservation-App\Flight-Reservation-App.csproj" />
   </ItemGroup>
+
+  <!-- Ensure the .pri resource file is included in publish output -->
+  <Target Name="CopyPriAfterPublish" AfterTargets="Publish">
+    <Copy SourceFiles="$(OutputPath)\$(AssemblyName).pri" DestinationFolder="$(PublishDir)" Condition="Exists('$(OutputPath)\$(AssemblyName).pri')" />
+  </Target>
 </Project>

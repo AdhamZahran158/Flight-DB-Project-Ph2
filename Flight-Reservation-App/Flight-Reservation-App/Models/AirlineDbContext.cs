@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,9 +45,9 @@ public partial class AirlineDbContext : DbContext
     {
         modelBuilder.Entity<Aircraft>(entity =>
         {
-            entity.HasKey(e => e.AircraftId).HasName("PK__Aircraft__F75CBC0B1BED214B");
+            entity.HasKey(e => e.AircraftID).HasName("PK__Aircraft__F75CBC0B1BED214B");
 
-            entity.Property(e => e.AircraftId)
+            entity.Property(e => e.AircraftID)
                 .ValueGeneratedNever()
                 .HasColumnName("AircraftID");
             entity.Property(e => e.CargoCapacity).HasColumnType("decimal(10, 2)");
@@ -134,7 +134,7 @@ public partial class AirlineDbContext : DbContext
             entity.Property(e => e.FlightId)
                 .ValueGeneratedNever()
                 .HasColumnName("FlightID");
-            entity.Property(e => e.AircraftId).HasColumnName("AircraftID");
+            entity.Property(e => e.AircraftID).HasColumnName("AircraftID");
             entity.Property(e => e.ArrivalAirportId).HasColumnName("ArrivalAirportID");
             entity.Property(e => e.ArrivalTime).HasColumnType("datetime");
             entity.Property(e => e.DepartureAirportId).HasColumnName("DepartureAirportID");
@@ -150,7 +150,7 @@ public partial class AirlineDbContext : DbContext
                 .IsUnicode(false);
 
             entity.HasOne(d => d.Aircraft).WithMany(p => p.Flights)
-                .HasForeignKey(d => d.AircraftId)
+                .HasForeignKey(d => d.AircraftID)
                 .HasConstraintName("FK__Flight__Aircraft__3C69FB99");
 
             entity.HasOne(d => d.ArrivalAirport).WithMany(p => p.FlightArrivalAirports)
@@ -205,11 +205,11 @@ public partial class AirlineDbContext : DbContext
 
         modelBuilder.Entity<Seat>(entity =>
         {
-            entity.HasKey(e => new { e.AircraftId, e.SeatNumber }).HasName("PK__Seat__E9BE60BB184762FC");
+            entity.HasKey(e => new { e.AircraftID, e.SeatNumber }).HasName("PK__Seat__E9BE60BB184762FC");
 
             entity.ToTable("Seat");
 
-            entity.Property(e => e.AircraftId).HasColumnName("AircraftID");
+            entity.Property(e => e.AircraftID).HasColumnName("AircraftID");
             entity.Property(e => e.SeatNumber)
                 .HasMaxLength(5)
                 .IsUnicode(false);
@@ -218,7 +218,7 @@ public partial class AirlineDbContext : DbContext
                 .IsUnicode(false);
 
             entity.HasOne(d => d.Aircraft).WithMany(p => p.Seats)
-                .HasForeignKey(d => d.AircraftId)
+                .HasForeignKey(d => d.AircraftID)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Seat__AircraftID__5165187F");
         });
@@ -281,7 +281,7 @@ public partial class AirlineDbContext : DbContext
             entity.Property(e => e.TicketId)
                 .ValueGeneratedNever()
                 .HasColumnName("TicketID");
-            entity.Property(e => e.AircraftId).HasColumnName("AircraftID");
+            entity.Property(e => e.AircraftID).HasColumnName("AircraftID");
             entity.Property(e => e.BookingId).HasColumnName("BookingID");
             entity.Property(e => e.SeatNumber)
                 .HasMaxLength(5)
@@ -298,7 +298,7 @@ public partial class AirlineDbContext : DbContext
                 .HasConstraintName("FK__Ticket__TripID__5535A963");
 
             entity.HasOne(d => d.Seat).WithMany(p => p.Tickets)
-                .HasForeignKey(d => new { d.AircraftId, d.SeatNumber })
+                .HasForeignKey(d => new { d.AircraftID, d.SeatNumber })
                 .HasConstraintName("FK__Ticket__5629CD9C");
         });
 
