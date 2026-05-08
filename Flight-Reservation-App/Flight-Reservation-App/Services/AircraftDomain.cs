@@ -1,6 +1,7 @@
 ﻿using Flight_Reservation_App.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,43 @@ namespace Flight_Reservation_App.Services
             var aircrafts = await _aircraftRepo.GetAsync();
             return aircrafts;
         }
+
+        public async Task<List<Seat>> GetAvailableSeats()
+        {
+            var seats = new List<Seat>();
+
+            var query = @"
+        SELECT *
+        FROM Seat s
+        WHERE s.SeatNumber NOT IN
+        (
+            SELECT t.SeatNumber
+            FROM Ticket t
+            WHERE t.AircraftId = s.AircraftId
+        )";
+
+            using (SqlConnection conn = new SqlConnection(GlobalUsing.connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                await conn.OpenAsync();
+
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        seats.Add(new Seat
+                        {
+                            AircraftId = (int)reader["AircraftId"],
+                            SeatNumber = reader["SeatNumber"].ToString(),
+                            ClassType = reader["ClassType"].ToString()
+                        });
+                    }
+                }
+            }
+
+            return seats;
+        }
+
 
         public async Task AddAircraft(Aircraft aircraft, int ecoSeats, int bussinessSeats, int firstClassSeats)
         {

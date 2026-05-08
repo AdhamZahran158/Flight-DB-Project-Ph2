@@ -11,15 +11,56 @@ namespace Flight_Reservation_App.Services
     public class TicketDomain
     {
         private readonly Repository<Ticket> _ticketRepository;
+        private readonly Repository<Trip> _tripRepository;
 
         public TicketDomain()
         {
             _ticketRepository = new Repository<Ticket>(GlobalUsing.connectionString);
+            _tripRepository = new Repository<Trip>(GlobalUsing.connectionString);
         }
 
         public TicketDomain(string connectionString)
         {
             _ticketRepository = new Repository<Ticket>(connectionString);
+            _tripRepository = new Repository<Trip>(connectionString);
+        }
+
+        public async Task AddTicket(Ticket ticket ,string? tripType= null)
+        {
+            await _tripRepository.AddAsync([nameof(Trip.TripType)], [tripType?? (object)DBNull.Value]);
+            var lastestTrip = (await _tripRepository.GetAsync()).LastOrDefault();
+            await _ticketRepository.AddAsync([
+                nameof(Ticket.TicketId),
+                nameof(Ticket.TicketPrice),
+                nameof(Ticket.BookingId),
+                nameof(Ticket.TripId),
+                nameof(Ticket.AircraftId),
+                nameof(Ticket.SeatNumber)],
+            [
+                    (object)ticket.TicketId,
+                    (object)ticket.TicketPrice??DBNull.Value,
+                    (object)ticket.BookingId?? DBNull.Value,
+                    (object)lastestTrip.TripId?? DBNull.Value,
+                    (object)ticket.AircraftId?? DBNull.Value,
+                    (object)ticket.SeatNumber?? DBNull.Value]);
+
+        }
+
+        public async Task<int> GetMaxTicketId()
+        {
+            using (SqlConnection conn = new SqlConnection(GlobalUsing.connectionString))
+            using (SqlCommand cmd = new SqlCommand("SELECT ISNULL(MAX(TicketID), 0) FROM Ticket", conn))
+            {
+                await conn.OpenAsync();
+                var result = await cmd.ExecuteScalarAsync();
+                return Convert.ToInt32(result);
+            }
+        }
+
+        public async Task<List<Ticket>> GetTickets()
+        {
+            var tickets = await _ticketRepository.GetAsync();
+            return tickets;
         }
 
         public async Task<List<Seat>> GetAvailableSeats()
@@ -58,33 +99,5 @@ namespace Flight_Reservation_App.Services
             return seats;
         }
 
-        public async Task AddTicket(Ticket ticket)
-        {
-            await _ticketRepository.AddAsync([
-                nameof(Ticket.TicketId),
-                nameof(Ticket.TicketPrice),
-                nameof(Ticket.BookingId),
-                nameof(Ticket.TripId),
-                nameof(Ticket.AircraftId),
-                nameof(Ticket.SeatNumber)],
-            [
-                    (object)ticket.TicketId,
-                    (object)ticket.TicketPrice??DBNull.Value,
-                    (object)ticket.BookingId?? DBNull.Value,
-                    (object)ticket.TripId?? DBNull.Value,
-                    (object)ticket.AircraftId?? DBNull.Value,
-                    (object)ticket.SeatNumber?? DBNull.Value]);
-        }
-
-        public async Task<int> GetMaxTicketId()
-        {
-            using (SqlConnection conn = new SqlConnection(GlobalUsing.connectionString))
-            using (SqlCommand cmd = new SqlCommand("SELECT ISNULL(MAX(TicketID), 0) FROM Ticket", conn))
-            {
-                await conn.OpenAsync();
-                var result = await cmd.ExecuteScalarAsync();
-                return Convert.ToInt32(result);
-            }
-        }
     }
 }

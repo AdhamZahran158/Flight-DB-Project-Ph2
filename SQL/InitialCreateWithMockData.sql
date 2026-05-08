@@ -77,10 +77,16 @@ CREATE TABLE FlightTrip (
 );
 
 CREATE TABLE Seat (
-    AircraftID INT  REFERENCES Aircraft(AircraftID),
+    AircraftID INT,
     SeatNumber VARCHAR(5),
     ClassType  VARCHAR(20),
-    PRIMARY KEY (AircraftID, SeatNumber)
+
+    PRIMARY KEY (AircraftID, SeatNumber),
+
+    CONSTRAINT FK_Seat_Aircraft
+    FOREIGN KEY (AircraftID)
+    REFERENCES Aircraft(AircraftID)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE Ticket (
