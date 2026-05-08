@@ -44,9 +44,14 @@ CREATE TABLE Tenant (
 );
 
 CREATE TABLE TenantPhone (
-    PassportNum VARCHAR(20) REFERENCES Tenant(PassportNum),
+    PassportNum VARCHAR(20),
     PhoneNumber VARCHAR(20),
-    PRIMARY KEY (PassportNum, PhoneNumber)
+    PRIMARY KEY (PassportNum, PhoneNumber),
+
+    CONSTRAINT FK_TenantPhone_Tenant
+    FOREIGN KEY (PassportNum)
+    REFERENCES Tenant(PassportNum)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE Booking (
@@ -54,15 +59,25 @@ CREATE TABLE Booking (
     BookingDate   DATE,
     BookingStatus VARCHAR(20),
     TotalPrice    DECIMAL(10,2),
-    PassportNum   VARCHAR(20) REFERENCES Tenant(PassportNum)
+    PassportNum   VARCHAR(20),
+
+    CONSTRAINT FK_Booking_Tenant
+    FOREIGN KEY (PassportNum)
+    REFERENCES Tenant(PassportNum)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE Payment (
     PaymentID     INT PRIMARY KEY,
     PaymentMethod VARCHAR(30),
     PaymentStatus VARCHAR(20),
-    BookingID     INT REFERENCES Booking(BookingID),
-    PaymentDate   DATE
+    BookingID     INT,
+    PaymentDate   DATE,
+
+    CONSTRAINT FK_Payment_Booking
+    FOREIGN KEY (BookingID)
+    REFERENCES Booking(BookingID)
+    ON DELETE CASCADE
 );
 
 CREATE TABLE Trip (
@@ -92,15 +107,22 @@ CREATE TABLE Seat (
 CREATE TABLE Ticket (
     TicketID    INT PRIMARY KEY,
     TicketPrice DECIMAL(10,2),
-    BookingID   INT REFERENCES Booking(BookingID),
-    TripID      INT REFERENCES Trip(TripID),
+    BookingID   INT,
+    TripID      INT,
     AircraftID  INT,
     SeatNumber  VARCHAR(5),
-    FOREIGN KEY (AircraftID, SeatNumber) REFERENCES Seat(AircraftID, SeatNumber)
+
+    CONSTRAINT FK_Ticket_Booking
+    FOREIGN KEY (BookingID)
+    REFERENCES Booking(BookingID)
+    ON DELETE CASCADE,
+
+    FOREIGN KEY (AircraftID, SeatNumber)
+    REFERENCES Seat(AircraftID, SeatNumber)
 );
 
 CREATE TABLE Baggage (
-    TicketID   INT  REFERENCES Ticket(TicketID),
+    TicketID   INT REFERENCES Ticket(TicketID),
     BaggageID  INT,
     Weight     DECIMAL(6,2),
     ExtraFee   DECIMAL(8,2),
